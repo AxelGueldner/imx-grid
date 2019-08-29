@@ -1,0 +1,33 @@
+/*  =========================================================
+basic config
+grid
+demo styles
+========================================================== */
+
+
+/*  =========================================================
+basic config
+========================================================= */
+@import 'imx-grid.less';
+
+/*  =========================================================
+grid
+========================================================= */
+.grid1{ .imx-grid(12, grid1-element, 1440px, 1440px, 1280px, 5px);}
+.grid2{ .imx-grid(8, grid2-element, 100%, 1440px, 1440px, 50px);}
+
+/*  =========================================================
+demo styles
+========================================================= */
+html, body{ margin: 0px; padding: 0px;}
+.grid1 > [class*='grid1-element']{
+  padding-bottom: unit(100/14.4, %);
+  margin-top: 5px; margin-bottom: 5px;
+}
+.grid2 > [class*='grid2-element']{
+  padding-bottom: unit(100/14.4, %);
+  margin-top: 5px; margin-bottom: 5px;
+}
+
+.demoStyleBlue{ background: #00f; }
+.demoStyleGreen{ background: #0f0; }

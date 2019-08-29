@@ -1,0 +1,64 @@
+/**
+ * @package    css
+ * @subpackage grid
+ **/
+
+/*  =========================================================
+grid
+element
+element widths
+element offsets
+========================================================== */
+
+/*  =========================================================
+init
+========================================================== */
+.imx-grid(@parts: 12, @namespace: imx-grid-el, @maxWidth: 100%, @wrapperWidth: 1440px, @baseWidth: 1440px, @elementMargin: 0px){
+  margin: 0px auto;
+  clear: both; display: block;
+  width: unit((@baseWidth/@wrapperWidth) * 100, %);
+  max-width: @maxWidth;
+  
+  [class*=~'@{namespace}-']{
+    display: inline-block; vertical-align: top;
+    box-sizing: border-box;
+    
+    /* margin settings for the grid elements */
+    margin-right: @elementMargin;
+    /* set base margin if there is no offset class present */
+    &:not([class*=~'@{namespace}-off-']){
+      margin-left: @elementMargin;
+    }
+  }
+  
+  @singleElementWidth: @baseWidth / @parts;
+  /* actual element creation */
+  .imx-grid-elements(@parts);
+}
+
+/*  =========================================================
+grid elements
+========================================================= */
+.imx-grid-elements(@parts: 12, @count: 1) when(@count =< @parts) {
+  .@{namespace}-@{count}{ .genericElementWidth(@count, @elementMargin, @baseWidth, @singleElementWidth);}
+  .@{namespace}-off-@{count}{ .genericElementOffset(@count, @elementMargin, @baseWidth, @singleElementWidth);}
+  .@{namespace}-off-n@{count}{ .genericElementOffset(@count, @elementMargin, @baseWidth, @singleElementWidth);}
+
+  .imx-grid-elements(@parts, (@count + 1));
+}
+
+/*  =========================================================
+element widths
+========================================================= */
+.genericElementWidth(@parts, @margin, @baseWidth, @singleElementWidth){
+  @elementWidth: unit((@singleElementWidth*@parts/@baseWidth)*100, %);
+  width: calc(~'@{elementWidth} - @{margin} - @{margin}');
+}
+
+/*  =========================================================
+element offsets
+========================================================= */
+.genericElementOffset(@parts, @margin, @baseWidth, @singleElementWidth){
+  @marginLeft: unit((@singleElementWidth*@parts/@baseWidth)*100, %);
+  margin-left: calc(~'@{marginLeft} + @{margin}');
+}
