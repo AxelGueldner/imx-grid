@@ -1,15 +1,19 @@
 {
   "name": "imx-grid",
   "version": "1.0.0",
-  "description": "Simple horizontal grid system used in imx projects"
+  "description": "simple horizontal grids",
+  "main": "less.min.js",
   "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AxelGueldner/imx-grid.git"
   },
-  "preferGlobal": false,
-  "author": "Axel Güldner <gueldner@infomax-it.de>",
-  "license": "ISC"
+  "author": "Axel Güldner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AxelGueldner/imx-grid/issues"
+  },
+  "homepage": "https://github.com/AxelGueldner/imx-grid#readme"
 }
