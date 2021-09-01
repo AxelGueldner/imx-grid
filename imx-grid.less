@@ -8,15 +8,17 @@ grid
 element
 element widths
 element offsets
+helper mixins
+mixins to calculate the actual margins/widths (can be used outside)
 ========================================================== */
 
 /*  =========================================================
 init
 ========================================================== */
-.imx-grid(@parts: 12, @namespace: imx-grid-el, @maxWidth: 100%, @wrapperWidth: 1440px, @baseWidth: 1440px, @elementMargin: 0px){
+.imx-grid(@parts: 12, @namespace: imx-grid-el, @maxWidth: 100%, @screenWidth: 1440px, @gridWidth: 1440px, @margin: 0){
   margin: 0px auto;
   clear: both; display: block;
-  width: unit((@baseWidth/@wrapperWidth) * 100, %);
+  width: unit((@gridWidth/@screenWidth) * 100, %);
   max-width: @maxWidth;
   
   [class*=~'@{namespace}-']{
@@ -24,14 +26,14 @@ init
     box-sizing: border-box;
     
     /* margin settings for the grid elements */
-    margin-right: @elementMargin;
+    margin-right: @margin;
     /* set base margin if there is no offset class present */
     &:not([class*=~'@{namespace}-off-']){
-      margin-left: @elementMargin;
+      margin-left: @margin;
     }
   }
   
-  @singleElementWidth: @baseWidth / @parts;
+  @singleElementWidth: .countSingleElementWidth(@gridWidth, @parts)[@result];
   /* actual element creation */
   .imx-grid-elements(@parts);
 }
@@ -40,9 +42,9 @@ init
 grid elements
 ========================================================= */
 .imx-grid-elements(@parts: 12, @count: 1) when(@count =< @parts) {
-  .@{namespace}-@{count}{ .genericElementWidth(@count, @elementMargin, @baseWidth, @singleElementWidth);}
-  .@{namespace}-off-@{count}{ .genericElementOffset(@count, @elementMargin, @baseWidth, @singleElementWidth);}
-  .@{namespace}-off-n@{count}{ .genericElementOffset(@count, @elementMargin, @baseWidth, @singleElementWidth);}
+  .@{namespace}-@{count}{ .genericElementWidth(@count, @parts, @margin, @gridWidth, @singleElementWidth);}
+  .@{namespace}-off-@{count}{ .genericElementOffset(@count, @parts, @margin, @gridWidth, @singleElementWidth);}
+  .@{namespace}-off-n@{count}{ .genericElementOffset(@count, @parts, @margin, @gridWidth, @singleElementWidth * -1);}
 
   .imx-grid-elements(@parts, (@count + 1));
 }
@@ -50,15 +52,52 @@ grid elements
 /*  =========================================================
 element widths
 ========================================================= */
-.genericElementWidth(@parts, @margin, @baseWidth, @singleElementWidth){
-  @elementWidth: unit((@singleElementWidth*@parts/@baseWidth)*100, %);
-  width: calc(~'@{elementWidth} - @{margin} - @{margin}');
+.genericElementWidth(@count, @parts, @margin, @gridWidth, @singleElementWidth){
+  width: .singleGridWidth(@count, @parts, @gridWidth, @margin, @singleElementWidth)[@result];
 }
 
 /*  =========================================================
 element offsets
 ========================================================= */
-.genericElementOffset(@parts, @margin, @baseWidth, @singleElementWidth){
-  @marginLeft: unit((@singleElementWidth*@parts/@baseWidth)*100, %);
-  margin-left: calc(~'@{marginLeft} + @{margin}');
+.genericElementOffset(@count, @parts, @margin, @gridWidth, @singleElementWidth){
+  margin-left: .singleGridOffset(@count, @parts, @gridWidth, @margin, @singleElementWidth)[@result];
+}
+
+
+/*  =========================================================
+helper mixins
+========================================================= */
+.countSingleElementWidth(@gridWidth, @parts){
+  @result: @gridWidth / @parts;
+}
+
+.returnSingleGridWidth(@singleElementWidth, @parts, @gridWidth){
+  @result: unit((@singleElementWidth*@parts/@gridWidth)*100, %);
+}
+
+/*  =========================================================
+mixins to calculate the actual margins/widths (can be used outside)
+========================================================= */
+.singleGridWidth(@count, @parts, @gridWidth, @margin){
+  @singleElementWidth: .countSingleElementWidth(@gridWidth, @parts)[@result];
+  @elementWidth: .returnSingleGridWidth(@singleElementWidth, @count, @gridWidth)[@result];
+
+  @result: calc(~'@{elementWidth} - @{margin} - @{margin}');
+}
+.singleGridWidth(@count, @parts, @gridWidth, @margin, @singleElementWidth){
+  @elementWidth: .returnSingleGridWidth(@singleElementWidth, @count, @gridWidth)[@result];
+
+  @result: calc(~'@{elementWidth} - @{margin} - @{margin}');
+}
+
+.singleGridOffset(@count, @parts, @gridWidth, @margin){
+  @singleElementWidth: .countSingleElementWidth(@gridWidth, @parts)[@result];
+  @elementWidth: .returnSingleGridWidth(@singleElementWidth, @count, @gridWidth)[@result];
+
+  @result: calc(~'@{elementWidth} + @{margin}');
+}
+.singleGridOffset(@count, @parts, @gridWidth, @margin, @singleElementWidth){
+  @elementWidth: .returnSingleGridWidth(@singleElementWidth, @count, @gridWidth)[@result];
+
+  @result: calc(~'@{elementWidth} + @{margin}');
 }
